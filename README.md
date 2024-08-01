@@ -12,10 +12,6 @@ E-Shop is a modern eCommerce web application built with a Laravel backend and a 
 - **Responsive Design:** Optimized for both desktop and mobile devices.
 - **Motion Animation:** Smooth UI transitions and animations for an enhanced user experience.
 
-## Screenshots
-
-*(Add screenshots of key pages like Home, Product List, Product Detail, Cart, etc.)*
-
 ## Tech Stack
 
 - **Frontend:** React, TypeScript, Tailwind CSS, Framer Motion, Lucide Icons
