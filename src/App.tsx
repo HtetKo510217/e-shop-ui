@@ -8,8 +8,7 @@ import ProductDetail from './pages//ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderHistory from './pages/OrderHistory';
-import SignUp from './pages/SignUp';
-import SignIn from './pages/SignIn';
+import SignIn from './pages/AuthPage';
 
 const App: React.FC = () => {
   return (
@@ -27,7 +26,6 @@ const App: React.FC = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-history" element={<OrderHistory />} />
-          <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
         </Routes>
       </motion.div>
