@@ -13,20 +13,20 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     // Fetch featured products
-    axios.get('http://127.0.0.1:8000/api/products').then((response) => {
+    axios.get(`${import.meta.env.VITE_API_URL}/products`).then((response) => {
       console.log(response.data.data);
       setFeaturedProducts(response.data.data);
     });
 
     // Fetch categories
-    axios.get('http://127.0.0.1:8000/api/categories').then((response) => {
+    axios.get(`${import.meta.env.VITE_API_URL}/categories`).then((response) => {
       console.log(response.data);
       setCategories(response.data);
     });
   }, []);
 
-  const handleCategoryClick = (categoryId: number) => {
-    navigate(`/products?category=${categoryId}`);
+  const handleCategoryClick = (category: string) => {
+    navigate(`/products?category=${category}`);
   };
 
   return (
@@ -55,7 +55,7 @@ const HomePage: React.FC = () => {
                 key={category.id}
                 whileHover={{ scale: 1.05 }}
                 className="bg-white rounded-lg shadow-lg p-4 cursor-pointer transition-transform duration-300"
-                onClick={() => handleCategoryClick(category.id)}
+                onClick={() => handleCategoryClick(category.name)}
               >
                 <h3 className="text-xl font-semibold text-center">{category.name}</h3>
               </motion.div>

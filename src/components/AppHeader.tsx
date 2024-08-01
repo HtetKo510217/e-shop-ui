@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, User, Search, Menu, X, ChevronDown } from 'lucide-react';
 import { Category } from '../models/Category';
+import { useCartStore } from '../store/cartStore';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,12 +12,17 @@ const Header: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
+  const cartItems = useCartStore(state => state.cartItems);
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
+
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/categories')
+    fetch(`${import.meta.env.VITE_API_URL}/categories`)
       .then(response => response.json())
       .then(data => setCategories(data))
       .catch(error => console.error('Error fetching categories:', error));
   }, []);
+  
 
   const handleCategorySelect = (category: string) => {
     setIsCategoryOpen(false);
@@ -89,10 +95,15 @@ const Header: React.FC = () => {
           <div className="flex items-center space-x-4">
             <Link
               to="/cart"
-              className="hover:text-gray-200 transition duration-300"
+              className="relative hover:text-gray-200 transition duration-300"
               onClick={() => setIsMenuOpen(false)}
             >
               <ShoppingCart className="h-6 w-6" />
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-0 -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-1">
+                  {cartCount}
+                </span>
+              )}
             </Link>
             <Link
               to="/signin"

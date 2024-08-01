@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import {  CheckCircle } from 'lucide-react';
-
+import { CheckCircle } from 'lucide-react';
+import { useCartStore } from '../store/cartStore';
+import { useNavigate } from 'react-router-dom';
 const CheckoutPage: React.FC = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
-
-  const cartItems = [
-    { id: 1, name: "Wireless Earbuds", price: 99.99, quantity: 1 },
-    { id: 2, name: "Smart Speaker", price: 79.99, quantity: 2 },
-  ];
+  const { cartItems, clearCart } = useCartStore((state) => ({
+    cartItems: state.cartItems,
+    clearCart: state.clearCart,
+  }));
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 10;
   const total = subtotal + shipping;
 
+  const handlePlaceOrder = () => {
+    clearCart();
+    setStep(3);
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen py-8">
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold mb-8">Checkout</h1>
-        
+
         <div className="flex justify-center mb-8">
           <div className="flex items-center">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-purple-600 text-white' : 'bg-gray-300'}`}>1</div>
@@ -58,6 +64,7 @@ const CheckoutPage: React.FC = () => {
                     </div>
                   </div>
                   <button 
+                    type="button" 
                     onClick={() => setStep(2)} 
                     className="bg-purple-600 text-white py-2 px-4 rounded-full hover:bg-purple-700 transition duration-300"
                   >
@@ -86,7 +93,8 @@ const CheckoutPage: React.FC = () => {
                     </div>
                   </div>
                   <button 
-                    onClick={() => setStep(3)} 
+                    type="button" 
+                    onClick={handlePlaceOrder} 
                     className="bg-purple-600 text-white py-2 px-4 rounded-full hover:bg-purple-700 transition duration-300"
                   >
                     Place Order
@@ -101,7 +109,8 @@ const CheckoutPage: React.FC = () => {
                 <h2 className="text-2xl font-semibold mb-4">Order Confirmed!</h2>
                 <p className="mb-4">Your order has been placed and will be shipped soon.</p>
                 <button 
-                  onClick={() => {/* Navigate to order tracking */}} 
+                  type="button" 
+                  onClick={() => {navigate('/order-history')}} 
                   className="bg-purple-600 text-white py-2 px-4 rounded-full hover:bg-purple-700 transition duration-300"
                 >
                   Track Order

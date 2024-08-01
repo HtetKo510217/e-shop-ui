@@ -1,23 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Trash2, Plus, Minus } from 'lucide-react';
+import { useCartStore } from '../store/cartStore'; 
 
 const CartPage: React.FC = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: "Wireless Earbuds", price: 99.99, quantity: 1, image: "https://via.placeholder.com/100x100" },
-    { id: 2, name: "Smart Speaker", price: 79.99, quantity: 2, image: "https://via.placeholder.com/100x100" },
-  ]);
-
-  const updateQuantity = (id: number, newQuantity: number) => {
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: Math.max(1, newQuantity) } : item
-    ));
-  };
-
-  const removeItem = (id: number) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-  };
+  const { cartItems, removeFromCart, updateQuantity } = useCartStore((state) => ({
+    cartItems: state.cartItems,
+    removeFromCart: state.removeFromCart,
+    updateQuantity: state.updateQuantity,
+  }));
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 10; // Fixed shipping cost
@@ -50,10 +42,10 @@ const CartPage: React.FC = () => {
                   className="bg-white rounded-lg shadow-md p-6 mb-4"
                 >
                   <div className="flex items-center">
-                    <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-md mr-4" />
+                    <img src={item.photo} alt={item.name} className="w-20 h-20 object-cover rounded-md mr-4" />
                     <div className="flex-grow">
                       <h3 className="text-lg font-semibold">{item.name}</h3>
-                      <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                      <p className="text-gray-600">${item.price}</p>
                     </div>
                     <div className="flex items-center">
                       <button 
@@ -71,7 +63,7 @@ const CartPage: React.FC = () => {
                       </button>
                     </div>
                     <button 
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeFromCart(item.id)}
                       className="ml-4 text-red-500 hover:text-red-700"
                     >
                       <Trash2 className="h-5 w-5" />

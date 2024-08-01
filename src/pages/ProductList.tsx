@@ -14,7 +14,7 @@ const ProductListPage: React.FC = () => {
         const categoryId = params.get('category');
 
         // Fetch products based on category
-        axios.get(`http://127.0.0.1:8000/api/products${categoryId ? `?category=${categoryId}` : ''}`).then(response => {
+        axios.get(`${import.meta.env.VITE_API_URL}/products${categoryId ? `?category=${categoryId}` : ''}`).then(response => {
             setProducts(response.data.data);
         });
     }, [location.search]);
