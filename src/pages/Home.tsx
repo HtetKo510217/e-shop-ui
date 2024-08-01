@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { Product } from '../models/Product';
+import { Category } from '../models/Category';
 import axios from 'axios';
 
 const HomePage: React.FC = () => {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch featured products
-    axios.get('http://127.0.0.1:8000/api/products').then(response => {
+    axios.get('http://127.0.0.1:8000/api/products').then((response) => {
       console.log(response.data.data);
       setFeaturedProducts(response.data.data);
     });
 
     // Fetch categories
-    axios.get('http://127.0.0.1:8000/api/categories').then(response => {
+    axios.get('http://127.0.0.1:8000/api/categories').then((response) => {
       console.log(response.data);
       setCategories(response.data);
     });
@@ -48,14 +50,14 @@ const HomePage: React.FC = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Categories</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories.map((category: any) => (
+            {categories.map((category) => (
               <motion.div
                 key={category.id}
                 whileHover={{ scale: 1.05 }}
-                className="bg-white rounded-lg shadow-md p-6 cursor-pointer"
+                className="bg-white rounded-lg shadow-lg p-4 cursor-pointer transition-transform duration-300"
                 onClick={() => handleCategoryClick(category.id)}
               >
-                <h3 className="text-xl font-semibold mb-4">{category.name}</h3>
+                <h3 className="text-xl font-semibold text-center">{category.name}</h3>
               </motion.div>
             ))}
           </div>
@@ -66,7 +68,7 @@ const HomePage: React.FC = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Featured Products</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProducts.map((product: any) => (
+            {featuredProducts.map((product) => (
               <motion.div
                 key={product.id}
                 whileHover={{ scale: 1.05 }}
@@ -76,10 +78,6 @@ const HomePage: React.FC = () => {
                 <div className="p-4">
                   <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
                   <p className="text-gray-600 mb-2">${product.price}</p>
-                  <div className="flex items-center mb-4">
-                    <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                    <span className="ml-1">{product.rating}</span>
-                  </div>
                   <Link to={`/product/${product.id}`} className="text-purple-600 font-semibold hover:text-purple-700 transition duration-300">
                     View Details <ArrowRight className="inline-block ml-1" />
                   </Link>
