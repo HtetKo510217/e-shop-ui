@@ -16,6 +16,7 @@ const ProductListPage: React.FC = () => {
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const categoryId = params.get('category');
+        const searchQuery = params.get('search');
 
         const fetchProducts = async () => {
             setLoading(true);
@@ -25,6 +26,7 @@ const ProductListPage: React.FC = () => {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/products`, {
                     params: {
                         category: categoryId,
+                        search: searchQuery,
                         sort: sortBy,
                         page: currentPage,
                     },
@@ -54,7 +56,7 @@ const ProductListPage: React.FC = () => {
                 <h1 className="text-3xl font-bold mb-8">Our Products</h1>
 
                 <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
-                    <div className="flex items-center">
+                    <div className="flex items-center mb-4 sm:mb-0">
                         <span className="mr-2">Sort by:</span>
                         <select
                             value={sortBy}
@@ -64,7 +66,6 @@ const ProductListPage: React.FC = () => {
                             <option value="popularity">Popularity</option>
                             <option value="price-low-high">Price: Low to High</option>
                             <option value="price-high-low">Price: High to Low</option>
-                            <option value="rating">Customer Rating</option>
                         </select>
                     </div>
                 </div>
@@ -109,8 +110,8 @@ const ProductListPage: React.FC = () => {
                                 key={index + 1}
                                 onClick={() => handlePageChange(index + 1)}
                                 className={`px-4 py-2 rounded-lg mx-1 mb-2 sm:mb-0 ${index + 1 === currentPage
-                                        ? 'bg-purple-600 text-white'
-                                        : 'bg-gray-300 text-gray-700'
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-gray-300 text-gray-700'
                                     }`}
                             >
                                 {index + 1}

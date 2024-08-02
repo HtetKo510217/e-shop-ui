@@ -5,6 +5,7 @@ import { ShoppingCart, User, Search, Menu, X, ChevronDown } from 'lucide-react';
 import { Category } from '../models/Category';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
+
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
@@ -17,6 +18,7 @@ const Header: React.FC = () => {
   const cartItems = useCartStore(state => state.cartItems);
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   const clearAuth = useAuthStore(state => state.clearAuth);
+
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/categories`)
       .then(response => response.json())
@@ -31,7 +33,7 @@ const Header: React.FC = () => {
 
   const handleCategorySelect = (category: string) => {
     setIsCategoryOpen(false);
-    navigate(`/products?category=${category}`);
+    navigate(`/products?category=${category}&search=${searchQuery}`);
     setIsMenuOpen(false);
   };
 
@@ -44,6 +46,10 @@ const Header: React.FC = () => {
 
   const handleMenuItemClick = () => {
     setIsMenuOpen(false);
+  };
+
+  const handleSearch = () => {
+    navigate(`/products?search=${searchQuery}`);
   };
 
   return (
@@ -99,8 +105,11 @@ const Header: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="bg-white bg-opacity-20 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-white"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleSearch();
+                }}
               />
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-300" />
+              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-300" onClick={handleSearch} />
             </div>
           </div>
 
@@ -205,8 +214,11 @@ const Header: React.FC = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="bg-white bg-opacity-20 rounded-full py-2 px-4 pl-10 w-full focus:outline-none focus:ring-2 focus:ring-white"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSearch();
+                  }}
                 />
-                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-300" />
+                <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-300" onClick={handleSearch} />
               </div>
             </motion.div>
           )}
