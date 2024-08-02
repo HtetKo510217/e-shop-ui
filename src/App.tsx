@@ -9,7 +9,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import OrderHistory from './pages/OrderHistory';
 import SignIn from './pages/AuthPage';
-
+import ProfilePage from './pages/ProfilePage';
 const App: React.FC = () => {
   return (
     <Router>
@@ -27,6 +27,7 @@ const App: React.FC = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </motion.div>
     </Router>

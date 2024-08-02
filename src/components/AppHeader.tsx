@@ -39,7 +39,7 @@ const Header: React.FC = () => {
     localStorage.removeItem('authToken');
     clearAuth();
     setIsLoggedIn(false);
-    navigate('/'); 
+    navigate('/signin');
   };
 
   const handleMenuItemClick = () => {
