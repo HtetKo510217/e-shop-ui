@@ -42,7 +42,8 @@ const CartPage: React.FC = () => {
                   className="bg-white rounded-lg shadow-md p-6 mb-4"
                 >
                   <div className="flex items-center">
-                    <img src={item.photo} alt={item.name} className="w-20 h-20 object-cover rounded-md mr-4" />
+                    <img 
+                      src={item.photo && item.photo.startsWith("http") ? item.photo : `${import.meta.env.VITE_IMAGE_URL}/${item.photo}`} alt={item.name} className="w-20 h-20 object-cover rounded-md mr-4" />
                     <div className="flex-grow">
                       <h3 className="text-lg font-semibold">{item.name}</h3>
                       <p className="text-gray-600">${item.price}</p>
