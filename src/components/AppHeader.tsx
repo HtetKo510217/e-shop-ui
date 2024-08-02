@@ -4,30 +4,42 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, User, Search, Menu, X, ChevronDown } from 'lucide-react';
 import { Category } from '../models/Category';
 import { useCartStore } from '../store/cartStore';
-
+import { useAuthStore } from '../store/authStore';
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCategoryOpen, setIsCategoryOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { token } = useAuthStore();
   const navigate = useNavigate();
 
   const cartItems = useCartStore(state => state.cartItems);
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-
-
+  const clearAuth = useAuthStore(state => state.clearAuth);
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/categories`)
       .then(response => response.json())
       .then(data => setCategories(data))
       .catch(error => console.error('Error fetching categories:', error));
   }, []);
-  
+
+  const authToken = localStorage.getItem('authToken') || token;
+  useEffect(() => {
+    setIsLoggedIn(!!authToken);
+  }, [authToken]);
 
   const handleCategorySelect = (category: string) => {
     setIsCategoryOpen(false);
     navigate(`/products?category=${category}`);
     setIsMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    clearAuth();
+    setIsLoggedIn(false);
+    navigate('/'); 
   };
 
   const handleMenuItemClick = () => {
@@ -105,13 +117,31 @@ const Header: React.FC = () => {
                 </span>
               )}
             </Link>
-            <Link
-              to="/signin"
-              className="hover:text-gray-200 transition duration-300"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <User className="h-6 w-6" />
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link
+                  to="/profile"
+                  className="hover:text-gray-200 transition duration-300"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <User className="h-6 w-6" />
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="hover:text-gray-200 transition duration-300"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/signin"
+                className="hover:text-gray-200 transition duration-300"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <User className="h-6 w-6" />
+              </Link>
+            )}
             <button
               className="md:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -174,7 +204,7 @@ const Header: React.FC = () => {
                   placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white bg-opacity-20 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="bg-white bg-opacity-20 rounded-full py-2 px-4 pl-10 w-full focus:outline-none focus:ring-2 focus:ring-white"
                 />
                 <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-300" />
               </div>

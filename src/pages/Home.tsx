@@ -14,13 +14,11 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     // Fetch featured products
     axios.get(`${import.meta.env.VITE_API_URL}/products`).then((response) => {
-      console.log(response.data.data);
       setFeaturedProducts(response.data.data);
     });
 
     // Fetch categories
     axios.get(`${import.meta.env.VITE_API_URL}/categories`).then((response) => {
-      console.log(response.data);
       setCategories(response.data);
     });
   }, []);
