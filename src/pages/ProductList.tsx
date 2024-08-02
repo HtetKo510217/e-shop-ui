@@ -80,7 +80,11 @@ const ProductListPage: React.FC = () => {
                             whileHover={{ scale: 1.05 }}
                             className="bg-white rounded-lg shadow-md overflow-hidden"
                         >
-                            <img src={product.photo} alt={product.name} className="w-full h-48 object-cover" />
+                            <img
+                                src={product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
+                                alt={product.name}
+                                className="w-full max-h-48 object-cover"
+                            />
                             <div className="p-4">
                                 <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
                                 <p className="text-gray-600 mb-2">${product.price}</p>
