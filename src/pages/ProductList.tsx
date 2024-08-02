@@ -81,7 +81,7 @@ const ProductListPage: React.FC = () => {
                             className="bg-white rounded-lg shadow-md overflow-hidden"
                         >
                             <img
-                                src={product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
+                                src={product.photo && product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
                                 alt={product.name}
                                 className="w-full max-h-48 object-cover"
                             />

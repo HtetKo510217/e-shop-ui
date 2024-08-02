@@ -34,7 +34,7 @@ const ProductDetailPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <motion.img
-                src={product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
+                src={product.photo && product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
                 alt={product.name}
                 className="w-full h-auto rounded-lg shadow-md"
                 initial={{ opacity: 0 }}
@@ -43,7 +43,7 @@ const ProductDetailPage: React.FC = () => {
               />
               <div className="flex mt-4 space-x-4">
                 <img
-                  src={product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
+                  src={product.photo && product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
                   alt={product.name}
                   className="w-20 h-20 object-cover rounded-lg cursor-pointer"
                 />
