@@ -3,22 +3,46 @@ import { motion } from 'framer-motion';
 import { CheckCircle } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useAuthStore } from '../store/authStore'; 
+
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const { cartItems, clearCart } = useCartStore((state) => ({
     cartItems: state.cartItems,
     clearCart: state.clearCart,
   }));
+  const { user } = useAuthStore(); 
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 10;
   const total = subtotal + shipping;
 
-  const handlePlaceOrder = () => {
-    clearCart();
-    setStep(3);
+  const handlePlaceOrder = async () => {
+    if (!user) {
+      navigate('/signin');
+      return;
+    }
+  
+    setLoading(true);
+  
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/orders`, {
+        total: total,
+        user_id: user.id, 
+      });
+  
+      clearCart();
+      setStep(3);
+    } catch (error) {
+      console.error('Error placing order:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
   return (
     <div className="bg-gray-100 min-h-screen py-8">
@@ -96,8 +120,9 @@ const CheckoutPage: React.FC = () => {
                     type="button" 
                     onClick={handlePlaceOrder} 
                     className="bg-purple-600 text-white py-2 px-4 rounded-full hover:bg-purple-700 transition duration-300"
+                    disabled={loading}
                   >
-                    Place Order
+                    {loading ? 'Placing Order...' : 'Place Order'}
                   </button>
                 </form>
               </motion.div>
