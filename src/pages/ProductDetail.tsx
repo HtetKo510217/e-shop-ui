@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { Star, ShoppingCart, Heart } from 'lucide-react';
+import { Star, ShoppingCart } from 'lucide-react';
 import { Product } from '../models/Product';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
