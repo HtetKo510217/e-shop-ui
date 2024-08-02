@@ -110,14 +110,6 @@ const ProductDetailPage: React.FC = () => {
                   <ShoppingCart className="mr-2" />
                   Add to Cart
                 </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="border border-purple-600 text-purple-600 px-6 py-3 rounded-full flex items-center"
-                >
-                  <Heart className="mr-2" />
-                  Add to Wishlist
-                </motion.button>
               </div>
             </div>
           </div>
