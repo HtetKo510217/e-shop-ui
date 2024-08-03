@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, User, Search, Menu, X, ChevronDown } from 'lucide-react';
+import { ShoppingCart, User, Search, Menu, X, ChevronDown, LogOut } from 'lucide-react';
 import { Category } from '../models/Category';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
@@ -12,6 +12,7 @@ const Header: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { user } = useAuthStore();
   const navigate = useNavigate();
 
@@ -43,14 +44,15 @@ const Header: React.FC = () => {
     clearAuth();
     setIsLoggedIn(false);
     navigate('/signin');
-  };
-
-  const handleMenuItemClick = () => {
-    setIsMenuOpen(false);
+    setShowLogoutConfirm(false);
   };
 
   const handleSearch = () => {
     navigate(`/products?search=${searchQuery}`);
+  };
+
+  const handleMenuItemClick = () => {
+    setIsMenuOpen(false);
   };
 
   return (
@@ -137,10 +139,10 @@ const Header: React.FC = () => {
                   <User className="h-6 w-6" />
                 </Link>
                 <button
-                  onClick={handleLogout}
+                  onClick={() => setShowLogoutConfirm(true)}
                   className="hover:text-gray-200 transition duration-300"
                 >
-                  Logout
+                  <LogOut className="h-6 w-6" />
                 </button>
               </>
             ) : (
@@ -225,6 +227,44 @@ const Header: React.FC = () => {
           )}
         </AnimatePresence>
       </div>
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="bg-white rounded-lg shadow-xl overflow-hidden max-w-md w-full mx-4"
+            >
+              <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4">
+                <h3 className="text-xl font-bold text-white">Confirm Logout</h3>
+              </div>
+              <div className="p-6">
+                <p className="text-gray-700 mb-6">Are you sure you want to log out? You'll need to sign in again to access your account.</p>
+                <div className="flex justify-end space-x-3">
+                  <button
+                    onClick={() => setShowLogoutConfirm(false)}
+                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-md hover:from-purple-700 hover:to-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

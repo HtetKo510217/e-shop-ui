@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../store/authStore';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Edit2, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
 const ProfilePage: React.FC = () => {
     const { user, setUser, clearAuth } = useAuthStore();
     const [isEditing, setIsEditing] = useState(false);
@@ -10,7 +11,9 @@ const ProfilePage: React.FC = () => {
     const [email, setEmail] = useState(user?.email || '');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const navigate = useNavigate();
+
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -45,6 +48,7 @@ const ProfilePage: React.FC = () => {
         localStorage.removeItem('authToken');
         localStorage.removeItem('userData');
         navigate('/signin');
+        setShowLogoutConfirm(false);
     };
 
     return (
@@ -115,7 +119,7 @@ const ProfilePage: React.FC = () => {
                         </button>
                         <button
                             className="flex items-center space-x-2 text-red-500"
-                            onClick={handleLogout}
+                            onClick={() => setShowLogoutConfirm(true)}
                         >
                             <LogOut size={20} />
                             <span>Logout</span>
@@ -123,6 +127,44 @@ const ProfilePage: React.FC = () => {
                     </div>
                 )}
             </div>
+            <AnimatePresence>
+                {showLogoutConfirm && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            className="bg-white rounded-lg shadow-xl overflow-hidden max-w-md w-full mx-4"
+                        >
+                            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-4">
+                                <h3 className="text-xl font-bold text-white">Confirm Logout</h3>
+                            </div>
+                            <div className="p-6">
+                                <p className="text-gray-700 mb-6">Are you sure you want to log out? You'll need to sign in again to access your account.</p>
+                                <div className="flex justify-end space-x-3">
+                                    <button
+                                        onClick={() => setShowLogoutConfirm(false)}
+                                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition duration-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-md hover:from-purple-700 hover:to-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
