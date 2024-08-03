@@ -12,7 +12,7 @@ const Header: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { token } = useAuthStore();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
 
   const cartItems = useCartStore(state => state.cartItems);
@@ -26,10 +26,10 @@ const Header: React.FC = () => {
       .catch(error => console.error('Error fetching categories:', error));
   }, []);
 
-  const authToken = localStorage.getItem('authToken') || token;
+  const userData = localStorage.getItem('userData') || user;
   useEffect(() => {
-    setIsLoggedIn(!!authToken);
-  }, [authToken]);
+    setIsLoggedIn(!!userData);
+  }, [userData]);
 
   const handleCategorySelect = (category: string) => {
     setIsCategoryOpen(false);
@@ -39,6 +39,7 @@ const Header: React.FC = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');  
     clearAuth();
     setIsLoggedIn(false);
     navigate('/signin');

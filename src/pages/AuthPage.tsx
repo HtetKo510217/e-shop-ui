@@ -41,6 +41,7 @@ const AuthPage: React.FC = () => {
       }
 
       localStorage.setItem('authToken', data.token); 
+      localStorage.setItem('userData', JSON.stringify(data.user));
       setToken(data.token);
       setUser(data.user);
       setName('');

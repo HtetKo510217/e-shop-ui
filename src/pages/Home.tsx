@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { Product } from '../models/Product';
 import { Category } from '../models/Category';
 import axios from 'axios';
@@ -9,23 +9,51 @@ import axios from 'axios';
 const HomePage: React.FC = () => {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch featured products
-    axios.get(`${import.meta.env.VITE_API_URL}/products`).then((response) => {
-      setFeaturedProducts(response.data.data);
-    });
+    setLoadingProducts(true);
+    axios.get(`${import.meta.env.VITE_API_URL}/products`)
+      .then((response) => {
+        setFeaturedProducts(response.data.data);
+        setLoadingProducts(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching products:', error);
+        setLoadingProducts(false);
+      });
 
     // Fetch categories
-    axios.get(`${import.meta.env.VITE_API_URL}/categories`).then((response) => {
-      setCategories(response.data);
-    });
+    setLoadingCategories(true);
+    axios.get(`${import.meta.env.VITE_API_URL}/categories`)
+      .then((response) => {
+        setCategories(response.data);
+        setLoadingCategories(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching categories:', error);
+        setLoadingCategories(false);
+      });
   }, []);
 
   const handleCategoryClick = (category: string) => {
     navigate(`/products?category=${category}`);
   };
+
+  const LoadingPlaceholder = ({ count }: { count: number }) => (
+    <>
+      {[...Array(count)].map((_, index) => (
+        <div key={index} className="bg-white rounded-lg shadow-md p-4 animate-pulse">
+          <div className="h-48 bg-gray-300 rounded-md mb-4"></div>
+          <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+        </div>
+      ))}
+    </>
+  );
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -47,45 +75,58 @@ const HomePage: React.FC = () => {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Categories</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories.map((category) => (
-              <motion.div
-                key={category.id}
-                whileHover={{ scale: 1.05 }}
-                className="bg-white rounded-lg shadow-lg p-4 cursor-pointer transition-transform duration-300"
-                onClick={() => handleCategoryClick(category.name)}
-              >
-                <h3 className="text-xl font-semibold text-center">{category.name}</h3>
-              </motion.div>
-            ))}
-          </div>
+          {loadingCategories ? (
+            <div className="flex justify-center items-center h-32">
+              <Loader2 className="w-12 h-12 text-purple-600 animate-spin" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {categories.map((category) => (
+                <motion.div
+                  key={category.id}
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-[#7c78a5] rounded-lg shadow-lg p-4 cursor-pointer transition-transform duration-300"
+                  onClick={() => handleCategoryClick(category.name)}
+                >
+                  <h3 className="text-xl font-semibold text-center text-white">{category.name}</h3>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       <section className="py-16 bg-gray-200">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-8">Featured Products</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredProducts.map((product) => (
-              <motion.div
-                key={product.id}
-                whileHover={{ scale: 1.05 }}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
-                <img
-                  src={product.photo && product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
-                  alt={product.name}
-                  className="w-full max-h-48 object-cover"
-                />                <div className="p-4">
-                  <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                  <p className="text-gray-600 mb-2">${product.price}</p>
-                  <Link to={`/product/${product.id}`} className="text-purple-600 font-semibold hover:text-purple-700 transition duration-300">
-                    View Details <ArrowRight className="inline-block ml-1" />
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          {loadingProducts ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <LoadingPlaceholder count={6} />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredProducts.map((product) => (
+                <motion.div
+                  key={product.id}
+                  whileHover={{ scale: 1.05 }}
+                  className="bg-white rounded-lg shadow-md overflow-hidden"
+                >
+                  <img
+                    src={product.photo && product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
+                    alt={product.name}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-4">
+                    <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
+                    <p className="text-gray-600 mb-2">${product.price}</p>
+                    <Link to={`/product/${product.id}`} className="text-purple-600 font-semibold hover:text-purple-700 transition duration-300">
+                      View Details <ArrowRight className="inline-block ml-1" />
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

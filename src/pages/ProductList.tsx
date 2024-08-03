@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { Product } from '../models/Product';
+import { Loader2 } from 'lucide-react';
 
 const ProductListPage: React.FC = () => {
     const [sortBy, setSortBy] = useState<string>('popularity');
@@ -70,66 +71,70 @@ const ProductListPage: React.FC = () => {
                     </div>
                 </div>
 
-                {loading && <p>Loading...</p>}
-                {error && <p className="text-red-600">{error}</p>}
+                {loading ? (
+                    <div className="flex justify-center items-center h-64">
+                        <Loader2 className="w-12 h-12 text-purple-600 animate-spin" />
+                    </div>
+                ) : error ? (
+                    <p className="text-red-600">{error}</p>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {products.map((product) => (
+                            <motion.div
+                                key={product.id}
+                                whileHover={{ scale: 1.05 }}
+                                className="bg-white rounded-lg shadow-md overflow-hidden"
+                            >
+                                <img
+                                    src={product.photo && product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
+                                    alt={product.name}
+                                    className="w-full max-h-48 object-cover"
+                                />
+                                <div className="p-4">
+                                    <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
+                                    <p className="text-gray-600 mb-2">${product.price}</p>
+                                    <Link
+                                        to={`/product/${product.id}`}
+                                        className="bg-purple-600 text-white px-4 py-2 rounded-full inline-block hover:bg-purple-700 transition duration-300"
+                                    >
+                                        View Details
+                                    </Link>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {products.map((product) => (
-                        <motion.div
-                            key={product.id}
-                            whileHover={{ scale: 1.05 }}
-                            className="bg-white rounded-lg shadow-md overflow-hidden"
-                        >
-                            <img
-                                src={product.photo && product.photo.startsWith("http") ? product.photo : `${import.meta.env.VITE_IMAGE_URL}/${product.photo}`}
-                                alt={product.name}
-                                className="w-full max-h-48 object-cover"
-                            />
-                            <div className="p-4">
-                                <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                                <p className="text-gray-600 mb-2">${product.price}</p>
-                                <Link
-                                    to={`/product/${product.id}`}
-                                    className="bg-purple-600 text-white px-4 py-2 rounded-full inline-block hover:bg-purple-700 transition duration-300"
-                                >
-                                    View Details
-                                </Link>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+                <div className="flex flex-wrap justify-center mt-8">
+                    <button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg mr-2 mb-2 disabled:opacity-50"
+                    >
+                        Previous
+                    </button>
 
-                <div className="flex flex-col items-center mt-8">
-                    <div className="flex flex-wrap justify-center">
+                    {Array.from({ length: totalPages }, (_, index) => (
                         <button
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg mr-2 mb-2 sm:mb-0 disabled:opacity-50"
-                        >
-                            Previous
-                        </button>
-
-                        {Array.from({ length: totalPages }, (_, index) => (
-                            <button
-                                key={index + 1}
-                                onClick={() => handlePageChange(index + 1)}
-                                className={`px-4 py-2 rounded-lg mx-1 mb-2 sm:mb-0 ${index + 1 === currentPage
+                            key={index + 1}
+                            onClick={() => handlePageChange(index + 1)}
+                            className={`px-4 py-2 rounded-lg mx-1 mb-2 ${
+                                index + 1 === currentPage
                                     ? 'bg-purple-600 text-white'
                                     : 'bg-gray-300 text-gray-700'
-                                    }`}
-                            >
-                                {index + 1}
-                            </button>
-                        ))}
-
-                        <button
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg ml-2 mb-2 sm:mb-0 disabled:opacity-50"
+                            }`}
                         >
-                            Next
+                            {index + 1}
                         </button>
-                    </div>
+                    ))}
+
+                    <button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg ml-2 mb-2 disabled:opacity-50"
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
         </div>

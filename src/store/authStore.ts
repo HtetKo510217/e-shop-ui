@@ -8,3 +8,14 @@ export const useAuthStore = create<AuthState>((set) => ({
     setToken: (token) => set({ token }),
     clearAuth: () => set({ user: null, token: null }),
 }));
+
+
+const authToken = localStorage.getItem('authToken');
+const userData = localStorage.getItem('userData');
+
+if (authToken && userData) {
+  useAuthStore.setState({
+    token: authToken,
+    user: JSON.parse(userData)
+  });
+}
